@@ -30,6 +30,7 @@ split_list_evenly() {
 gpu_ids=(0 1 2 4 5 6 7)
 gpu_count=${#gpu_ids[@]}
 receptors=(structs/*_recep.pdb)
+receptors=(structs/6y5f_2_recep.pdb)
 
 rec_count=${#receptors[@]}
 
@@ -54,7 +55,7 @@ for chunk in "${chunks[@]}"; do
         echo "  $item"
     done
     # Run FEW
-    sh runFEW.sh $gpu_id $chunk > gpu_id_${gpu_id}.out 2>&1 & PID=$!
+    sh FEWer/runFEW.sh $gpu_id $chunk > gpu_id_${gpu_id}.out 2>&1 & PID=$!
     PIDs="${PIDs} ${PID}"
     echo "PID: ${PID}"
     echo "---"

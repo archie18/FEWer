@@ -60,11 +60,11 @@ SSbond_file                 ../disulfide_bridges.txt
 additional_library          ../ions.lib
 additional_frcmod            
 MD_batch_path               
-MDequil_template_folder     ../../input_info/equi
+MDequil_template_folder     ../../FEWer/input_info/equi
 total_MDequil_time          400
-MDequil_batch_template      ../../input_info/equi.pbs
-MDprod_template             ../../input_info/MD_prod.in
+MDequil_batch_template      ../../FEWer/input_info/equi.pbs
+MDprod_template             ../../FEWer/input_info/MD_prod.in
 total_MDprod_time           2
-MDprod_batch_template       ../../input_info/prod.pbs
+MDprod_batch_template       ../../FEWer/input_info/prod.pbs
 no_of_rec_residues          # will be replaced
 restart_file_for_MDprod     md_nvt_red_06

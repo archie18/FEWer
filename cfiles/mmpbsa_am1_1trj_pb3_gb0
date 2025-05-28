@@ -128,7 +128,7 @@ first_PB_snapshot         81
 last_PB_snapshot          100
 offset_PB_snapshots       1
 #
-mmpbsa_batch_template     ../../input_info/MMPBSA.sge
+mmpbsa_batch_template     ../../FEWer/input_info/MMPBSA.sge
 mmpbsa_batch_path         # Will be replaced
 #
 mmpbsa_sander_exe         

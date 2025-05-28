@@ -6,6 +6,7 @@
 # gpu_id:    ID of the GPU to use
 #
 # HISTORY
+# 2025-05-28    0.5    Andreas    Adapted paths to new script location in FEWer subdir
 # 2025-05-23    0.4    Andreas    Using FEW.pl within Amber path
 #                                 Made _ions.lib optional
 #                                 Added _bonds.txt for optional extra 'bond' commands for the
@@ -67,7 +68,8 @@ for base in "${basenames[@]}"; do
     mkdir -p ligs
     antechamber -i ../structs/"${lig}" -fi sdf -o ligs/ligand.mol2 -fo mol2
 
-    cp ../cfiles/leap_am1 .
+    # Copy ligand leap config file
+    cp ../FEWer/cfiles/leap_am1 .
 
     # Treat charged ligands
     rm -f lig_charge_file
@@ -86,11 +88,11 @@ for base in "${basenames[@]}"; do
 
     # Prepare MD
     numres=$(cat receptor_prep_renum.txt | grep -v HOH | grep -v WAT | tail -1 | awk '{print $NF}') # Get number of residues of the receptor
-    cp ../cfiles/setup_am1_1trj_MDs .
+    cp ../FEWer/cfiles/setup_am1_1trj_MDs .
     sed -i 's/^no_of_rec_residues.*/no_of_rec_residues          '${numres}'/' setup_am1_1trj_MDs 
 
     # Prepare MMPBSA
-    cp ../cfiles/mmpbsa_am1_1trj_pb3_gb0 .
+    cp ../FEWer/cfiles/mmpbsa_am1_1trj_pb3_gb0 .
     sed -i 's/^no_of_rec_residues.*/no_of_rec_residues        '${numres}'/' mmpbsa_am1_1trj_pb3_gb0
 
     # Copy crystallographic ions library OFF file
