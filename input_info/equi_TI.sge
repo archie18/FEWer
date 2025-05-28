@@ -1,0 +1,136 @@
+#!/bin/csh
+#
+#$ -N
+#$ -S /bin/csh
+#$ -pe intelmpi8_* 32
+#$ -q parallel
+#$ -l h_rt=23:59:00
+#$ -j y
+
+#
+# --- Prepare environment
+#
+source /etc/profile.d/modules.csh
+module purge
+module add sge
+module add intel-cluster-runtime
+module add amber/amber14
+source $AMBERHOME/amber.csh
+/bin/sleep 5
+
+#
+# --- Prepare calculation
+#
+limit stacksize unlimited
+set PROC=$NSLOTS
+if($PROC > 1) then
+  echo Preparing for parallel run with $PROC slots
+  if($PROC % 2 != 0) then
+    echo The value of PROC must be a multiple of 2, but is $PROC => Exiting
+    exit
+  endif
+  set EXE=$AMBERHOME/bin/sander.MPI
+  set DO_PARALLEL="mpirun -np $PROC"
+else
+  echo Preparing for serial run with $PROC slots
+  set EXE=$AMBERHOME/bin/sander
+  set DO_PARALLEL=""
+endif
+
+
+################################################################################
+#      Do not modify this part of the script
+#
+#
+# --- Fix variables
+#
+set SCRIPT=
+set PATH=
+set DIFF=
+#
+# --- Variables to be modified before new queueing
+#
+@ START=
+@ END=
+#
+# --- Goto work dir
+#
+echo Goto $PATH
+cd $PATH
+#
+# --- Init for loop
+#
+@ COUNT=$START
+if($COUNT < 10) then
+  set COUNTEXP = '0'$COUNT
+else if($COUNT < 100) then
+  set COUNTEXP = $COUNT
+else
+  set COUNTEXP = $COUNT
+endif
+#
+# --- Save copy of this script
+#
+cp $SCRIPT ${SCRIPT}_${COUNTEXP}
+#
+# --- Loop
+#
+if($COUNT < $END) then
+
+echo "=>> Processing " $COUNT
+echo $HOSTNAME
+
+# Execute
+#
+# Equilibration
+set EQUI=group_equi01_lX
+echo EQUI $EQUI
+$DO_PARALLEL $EXE -O -ng 2 -groupfile $EQUI
+
+PRODUCTION
+
+# Prepare for new run
+if($status != 0) then
+  echo Error in ${COUNTEXP}\. run
+  exit
+else
+  @ COUNT = $COUNT + $DIFF
+  if($COUNT < 10) then
+    set COUNTEXP = '0'$COUNT
+  else if($COUNT < 100) then
+    set COUNTEXP = $COUNT
+  else
+    set COUNTEXP = $COUNT
+  endif
+endif
+
+#
+# --- Save results
+#
+echo Zipping
+gzip -9 *.mdcrd
+
+#
+# --- Modify this script
+#
+echo Modifying $SCRIPT
+set C1="s/^@ START=[0-9]*/@ START="${COUNT}"/"
+set C2="s/^set EQUI=.*/set EQUI=group_equi01_l"${COUNTEXP}"/"
+set C3=PRODUCTION
+cat $SCRIPT | sed -e "$C1" | sed -e "$C2" 
+mv tmp $SCRIPT
+
+#
+#      End of part of the script that should not be modified.
+#
+###############################################################################
+
+#
+# --- Re-queue
+#
+/usr/bin/ssh cpcsrv "setenv SGE_ROOT /cm/shared/apps/sge/current; module load shared sge; qsub $SCRIPT"
+endif
+#
+# --- Exit this script
+#
+exit

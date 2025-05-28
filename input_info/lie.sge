@@ -1,0 +1,41 @@
+#!/bin/csh
+#
+#$ -N
+#$ -S /bin/csh
+#$ -pe intelmpi8_* 8
+#$ -q parallel
+#$ -l h_rt=23:59:00
+#$ -j y
+
+#
+# --- Prepare environment
+#
+source /etc/profile.d/modules.csh
+module purge
+module add sge
+module add intel-cluster-runtime
+module add amber/amber14
+source $AMBERHOME/amber.csh
+/bin/sleep 5
+
+################################################################################
+#      Do not modify the script from here onward
+#
+#
+# --- Prepare calculation
+#
+limit stacksize unlimited
+#
+# --- Fix variables
+#
+set PATH=
+
+#
+# --- Goto work dir
+#
+echo Goto $PATH
+cd $PATH
+
+#
+# --- Conduct calculation
+#
