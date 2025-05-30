@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 num_recep=$(ls -1 structs/*_recep.pdb | wc -l)
-iterations=$(cat runFEW.sh | grep NREP= | grep -Eo [0-9]+)
+dir=$(dirname "$0")
+iterations=$(cat "${dir}/runFEW.sh" | grep NREP= | grep -Eo [0-9]+)
 
 let max=$num_recep*$iterations;
 progress=$(grep "\* Status:     finished" gpu_id_*.out | wc -l)
@@ -21,7 +22,7 @@ remaining_min=$(bc <<< "scale=0; $remaining_it * $speed / 1")
 date_finished=$(date -d ${remaining_min}min)
 
 error_count=$(grep -vf error_exclude.txt gpu_id_*.out | grep -i error | wc -l)
-min_energy=$(./get_all_results.py --met FEW | cut -f3 | tail -n +2 | awk '{if(min==""){min=$1}; if($1<min) {min=$1}} END {print min}')
+min_energy=$("${dir}/get_all_results.py" --met FEW | cut -f3 | tail -n +2 | awk '{if(min==""){min=$1}; if($1<min) {min=$1}} END {print min}')
 
 echo "Max:         $max"
 echo "Progress:    $progress"
