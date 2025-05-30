@@ -54,7 +54,7 @@ for chunk in "${chunks[@]}"; do
         echo "  $item"
     done
     # Run FEW
-    sh FEWer/runFEW.sh $gpu_id $chunk > gpu_id_${gpu_id}.out 2>&1 & PID=$!
+    ./FEWer/runFEW.sh $gpu_id $chunk > gpu_id_${gpu_id}.out 2>&1 & PID=$!
     PIDs="${PIDs} ${PID}"
     echo "PID: ${PID}"
     echo "---"
