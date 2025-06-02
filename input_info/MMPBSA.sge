@@ -15,7 +15,7 @@
 #module add sge
 #module add intel-cluster-runtime
 #module add amber/amber14
-source $AMBERHOME/amber.csh
+source "${AMBERHOME}/amber.csh"
 #/bin/sleep 5
 
 ################################################################################
