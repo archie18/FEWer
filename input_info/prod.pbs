@@ -16,10 +16,10 @@
 # --- Prepare calculation
 #
 limit stacksize unlimited
-source /opt/biology/amber16/amber.csh
+source "${AMBERHOME}/amber.csh"
 set PROC=""
 set DO_PARALLEL=""
-set EXE="/opt/biology/amber16/bin"
+set EXE="${AMBERHOME}/bin"
 
 ################################################################################
 #      Do not modify this part of the script
