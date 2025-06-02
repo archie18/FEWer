@@ -127,17 +127,17 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.met == "FEW":
-        res = subprocess.check_output("find . -name *_statistics.out -print0 -exec tail -1 {} \;", shell=True, text=True)
+        res = subprocess.check_output("find . -name *_statistics.out -print0 -exec tail -1 {} \;", shell=True, universal_newlines=True)
         deltaGs = parse_res_few(res)
         print_deltaGs(deltaGs, {})
     else:
         print("FAR_results")
-        res = subprocess.check_output("find . -name FAR_results.tsv -exec cat {} \;", shell=True, text=True)
+        res = subprocess.check_output("find . -name FAR_results.tsv -exec cat {} \;", shell=True, universal_newlines=True)
         deltaGs = parse_res(res, args.rep)
         print_deltaGs(deltaGs, {})
         print("MMPBSA_results")
-        res = subprocess.check_output("find . -name MMPBSA_results.tsv -exec cat {} \;", shell=True, text=True)
+        res = subprocess.check_output("find . -name MMPBSA_results.tsv -exec cat {} \;", shell=True, universal_newlines=True)
         deltaGs = parse_res(res, args.rep)
-        rmsd_files = subprocess.check_output("find . -name ligand_prod.rmsd -print", shell=True, text=True)
+        rmsd_files = subprocess.check_output("find . -name ligand_prod.rmsd -print", shell=True, universal_newlines=True)
         rmsds = parse_rmsd(rmsd_files, args.rep)
         print_deltaGs(deltaGs, rmsds)
