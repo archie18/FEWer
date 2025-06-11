@@ -13,11 +13,11 @@
 # --- Prepare calculation
 #
 limit stacksize unlimited
-source /opt/biology/amber16/amber.csh
+source "${AMBERHOME}/amber.csh"
 set PROC=4
-set DO_PARALLEL="/usr/lib64/openmpi/bin/mpirun -np $PROC"
-set EXE="/opt/biology/amber16/bin/pmemd.MPI"
-set EXE2="/opt/biology/amber16/bin/pmemd.cuda"
+set DO_PARALLEL="mpirun -np $PROC"
+set EXE="${AMBERHOME}/bin/pmemd.MPI"
+set EXE2="${AMBERHOME}/bin/pmemd.cuda"
 
 
 ################################################################################
