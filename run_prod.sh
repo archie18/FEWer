@@ -3,6 +3,7 @@
 export CPU_count=4
 gpu_ids=(0 1 2 4 5 6 7)
 receptors=(structs/*_recep.pdb)
+export mpirun_bin=/usr/lib64/openmpi/bin/mpirun
 
 gpu_count=${#gpu_ids[@]}
 rec_count=${#receptors[@]}

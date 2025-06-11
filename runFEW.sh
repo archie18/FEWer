@@ -22,7 +22,7 @@ NREP=5
 TREAT_CHARGE=1
 
 # Prepare structure with pdb4amber?
-PDB4AMBER=0
+PDB4AMBER=1
 
 # Command line parsing
 gpu_id="$1"
