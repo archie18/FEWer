@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+export CPU_count=4
+gpu_ids=(0 1 2 4 5 6 7)
+receptors=(structs/*_recep.pdb)
+
+gpu_count=${#gpu_ids[@]}
+rec_count=${#receptors[@]}
+
 split_list_evenly() {
   local num_chunks=$1
   shift
@@ -26,12 +33,6 @@ split_list_evenly() {
   # Print the result, one chunk per line
   printf '%s\n' "${result[@]}"
 }
-
-gpu_ids=(0 1 2 4 5 6 7)
-gpu_count=${#gpu_ids[@]}
-receptors=(structs/*_recep.pdb)
-
-rec_count=${#receptors[@]}
 
 # Get receptor basename
 basenames=()

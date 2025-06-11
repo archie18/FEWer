@@ -14,7 +14,7 @@
 #
 limit stacksize unlimited
 source "${AMBERHOME}/amber.csh"
-set PROC=4
+set PROC="${CPU_count}"
 set DO_PARALLEL="mpirun -np $PROC"
 set EXE="${AMBERHOME}/bin/pmemd.MPI"
 set EXE2="${AMBERHOME}/bin/pmemd.cuda"
