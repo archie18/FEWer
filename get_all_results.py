@@ -8,6 +8,7 @@
 # Andreas Schueller <aschueller@uc.cl>
 #
 # HISTORY
+# 2025-06-24    0.5    Andreas    Added "n" (counts) to output
 # 2025-05-03    0.4.1  Andreas    Fixed bug with FEW version, output filename is
 #                                 *_statistics.out 
 # 2025-04-29    0.4    Andreas    Adapted to work with FEW results
@@ -44,10 +45,10 @@ def print_line(lig, rec, deltaGs, rmsds):
         sd_rmsd_20 = ""
     Ki = math.exp(deltaG*1000/1.985/300)
     pKi = -1 * math.log10(Ki)
-    print(lig, rec, deltaG, sd, Ki * 1e9, pKi, mean_rmsd_20, sd_rmsd_20, mean_rmsd_all, sd_rmsd_all, sep="\t")
+    print(lig, rec, deltaG, sd, Ki * 1e9, pKi, len(deltaGs), mean_rmsd_20, sd_rmsd_20, mean_rmsd_all, sd_rmsd_all, len(rmsds), sep="\t")
 
 def print_deltaGs(deltaGs, rmsds):
-    print("Ligand", "Receptor", "Average(deltaG)[kcal/mol]", "StDev(deltaG)[kcal/mol]", "Ki[nM]", "pKi", "Average(ligang_RMSD_last_20)[A]", "StDev(ligand_RMSD_last_20)[A]", "Average(ligang_RMSD)[A]", "StDev(ligand_RMSD)[A]", sep="\t")
+    print("Ligand", "Receptor", "Average(deltaG)[kcal/mol]", "StDev(deltaG)[kcal/mol]", "Ki[nM]", "pKi", "n(deltaG)", "Average(ligang_RMSD_last_20)[A]", "StDev(ligand_RMSD_last_20)[A]", "Average(ligang_RMSD)[A]", "StDev(ligand_RMSD)[A]", "n(RMSD)", sep="\t")
     for rec in deltaGs:
         for lig in deltaGs[rec]:
             if rmsds:
