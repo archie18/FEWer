@@ -132,4 +132,4 @@ mmpbsa_batch_template     ../../FEWer/input_info/MMPBSA.sge
 mmpbsa_batch_path         # Will be replaced
 #
 mmpbsa_sander_exe         
-parallel_mmpbsa_calc      $CPU_count
+parallel_mmpbsa_calc      # Will be replaced
