@@ -1,9 +1,32 @@
 #!/usr/bin/env bash
 
+########## CONFIGURATION ###########
+
+# Number of parallel CPU jobs
 export CPU_count=4
+
+# Available GPUs - use nvidia-smi to get IDs
 gpu_ids=(0 1 2 4 5 6 7)
+
+# Receptor file mask
 receptors=(structs/*_recep.pdb)
+
+# mpirun binary
 export mpirun_bin=/usr/lib64/openmpi/bin/mpirun
+
+# Use ANTECHAMBER or BABEL to convert from sdf to mol2?
+export sdf_to_mol2=BABEL
+
+# Number of repetitions
+export NREP=5
+
+# Treat formal ligand charge? Does only work if ligans are provided (additionally) in SDF format
+export TREAT_CHARGE=1
+
+# Prepare structure with pdb4amber?
+export PDB4AMBER=1
+
+###################################
 
 gpu_count=${#gpu_ids[@]}
 rec_count=${#receptors[@]}

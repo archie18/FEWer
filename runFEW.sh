@@ -16,13 +16,13 @@
 #                                 to define disulfide bridges.
 
 # Number of repetitions
-NREP=5
+#NREP=5
 
 # Treat formal ligand charge? Does only work if ligans are provided (additionally) in SDF format
-TREAT_CHARGE=1
+#TREAT_CHARGE=1
 
 # Prepare structure with pdb4amber?
-PDB4AMBER=1
+#PDB4AMBER=1
 
 # Command line parsing
 gpu_id="$1"
@@ -64,9 +64,17 @@ for base in "${basenames[@]}"; do
         cp ../structs/${base}_sslink.txt disulfide_bridges.txt
     fi
 
-    # Convert ligand format with antechamber
+    # Convert ligand format from SDF to MOL2
     mkdir -p ligs
-    antechamber -i ../structs/"${lig}" -fi sdf -o ligs/ligand.mol2 -fo mol2
+    if [[ "$sdf_to_mol2" == "BABEL" ]]; then
+        echo "Using babel to convert ligand from SDF to MOL2..."
+        babel -isdf ../structs/"${lig}" -omol2 ligs/_ligand.mol2
+        ../FEWer/fix_atom_names_mol2.py ligs/_ligand.mol2 > ligs/ligand.mol2
+        rm ligs/_ligand.mol2
+    else
+        echo "Using antechamber to convert ligand from SDF to MOL2..."
+        antechamber -i ../structs/"${lig}" -fi sdf -o ligs/ligand.mol2 -fo mol2
+    fi
 
     # Copy ligand leap config file
     cp ../FEWer/cfiles/leap_am1 .
@@ -74,8 +82,10 @@ for base in "${basenames[@]}"; do
     # Treat charged ligands
     rm -f lig_charge_file
     if [[ -v TREAT_CHARGE && TREAT_CHARGE -ne 0 ]]; then
-        charge=$(grep "M  CHG" ../structs/"${base}_lig.sdf" | awk '{print $NF}' )
-        if [ -n "$charge" ]; then
+        #charge=$(grep "M  CHG" ../structs/"${base}_lig.sdf" | awk '{print $NF}' )
+        #if [ -n "$charge" ]; then
+        charge=$(../FEWer/net_charge_sdf.py ../structs/"${base}_lig.sdf")
+        if [ "$charge" -ne 0 ]; then
             echo "Ligand charge: $charge"
             sed -i 's/^non_neutral_ligands.*/non_neutral_ligands          1/' leap_am1
             echo -e "ligand.mol2\t${charge}" > lig_charge_file 
@@ -94,6 +104,7 @@ for base in "${basenames[@]}"; do
     # Prepare MMPBSA
     cp ../FEWer/cfiles/mmpbsa_am1_1trj_pb3_gb0 .
     sed -i 's/^no_of_rec_residues.*/no_of_rec_residues        '${numres}'/' mmpbsa_am1_1trj_pb3_gb0
+    sed -i 's/^parallel_mmpbsa_calc.*/parallel_mmpbsa_calc      '${CPU_count}'/' mmpbsa_am1_1trj_pb3_gb0
 
     # Copy crystallographic ions library OFF file
     # Needs to be prepared separately with the make_additional_library.sh script
