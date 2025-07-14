@@ -122,6 +122,9 @@ for base in "${basenames[@]}"; do
         sed 's/<name>/REC/g' _bonds.txt >> bonds_1.txt
     fi
 
+   # Copy rmsd input file
+   cp ../FEWer/input_info/measure_all_rmsd.in .
+
     ### Run MD and MMPBSA
     for i in $(seq 1 $NREP); do
         echo "******************************************"
@@ -152,9 +155,27 @@ for base in "${basenames[@]}"; do
         sed -i 's#^output_path.*#output_path                  '$(pwd)'#' mmpbsa_am1_1trj_pb3_gb0
         sed -i 's#^mmpbsa_batch_path.*#mmpbsa_batch_path         '$(pwd)'#' mmpbsa_am1_1trj_pb3_gb0
         perl "${AMBERHOME}"/AmberTools/src/FEW/FEW.pl MMPBSA mmpbsa_am1_1trj_pb3_gb0
-        sed -i 's/qsub/csh/' ./calc_a_1t/qsub_s81_100_1_pb3_gb0.sh
+        sed -i 's/qsub/csh/' ./calc_a_1t/qsub_*_1_pb3_gb0.sh
         echo "Running MM-PBSA..."
-        ./calc_a_1t/qsub_s81_100_1_pb3_gb0.sh    
+        ./calc_a_1t/qsub_*_1_pb3_gb0.sh
+        
+        echo "Calculating RMSD..."
+        cp ../measure_all_rmsd.in .
+        mkdir -p rmsd
+        gunzip -c MD_am1/ligand/com/equi/md_npt_ntr.mdcrd.gz > rmsd/md_npt_ntr.mdcrd
+        gunzip -c MD_am1/ligand/com/equi/md_nvt_red_01.mdcrd.gz > rmsd/md_nvt_red_01.mdcrd
+        gunzip -c MD_am1/ligand/com/equi/md_nvt_red_02.mdcrd.gz > rmsd/md_nvt_red_02.mdcrd
+        gunzip -c MD_am1/ligand/com/equi/md_nvt_red_03.mdcrd.gz > rmsd/md_nvt_red_03.mdcrd
+        gunzip -c MD_am1/ligand/com/equi/md_nvt_red_04.mdcrd.gz > rmsd/md_nvt_red_04.mdcrd
+        gunzip -c MD_am1/ligand/com/equi/md_nvt_red_05.mdcrd.gz > rmsd/md_nvt_red_05.mdcrd
+        gunzip -c MD_am1/ligand/com/equi/md_nvt_red_06.mdcrd.gz > rmsd/md_nvt_red_06.mdcrd
+        for mdcrd in MD_am1/ligand/com/prod/*.mdcrd; do
+        sed -i "/#prod/i \
+trajin ${mdcrd}" measure_all_rmsd.in
+        done
+        cpptraj -i measure_all_rmsd.in
+        rm rmsd/*.mdcrd #clean up
+    
         cd ..
         echo "*****************************************"
         echo "* Iteration:  $i"
