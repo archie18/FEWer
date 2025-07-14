@@ -1,0 +1,31 @@
+#Load parameter topology file
+parm rmsd/ligand_solv_com.top
+
+#Load trajectories
+trajin rmsd/md_npt_ntr.mdcrd
+trajin rmsd/md_nvt_red_01.mdcrd
+trajin rmsd/md_nvt_red_02.mdcrd
+trajin rmsd/md_nvt_red_03.mdcrd
+trajin rmsd/md_nvt_red_04.mdcrd
+trajin rmsd/md_nvt_red_05.mdcrd
+trajin rmsd/md_nvt_red_06.mdcrd
+#prod
+
+# Load reference coordinates
+reference MD_am1/ligand/cryst/ligand_solv_com.crd
+
+# Prevent chaos in atom order
+fixatomorder
+
+# Strip waters and optionally ions (e.g., Na+, Cl-) and write new parmateter topology file
+strip :WAT,Na+,Cl- parmout rmsd/ligand_solv_com_stripped_centered.prmtop
+
+# Center the protein in the box
+autoimage
+center :1-{numres} mass reference  # Adjust residue range or use ":PROT"
+
+# Calculate backbone RMSD
+rms reference out rmsd/complex_all.rmsd @CA,C,N
+
+# Output trajectory as NetCDF
+trajout rmsd/md_equi_prod_stripped_centered.nc netcdf compress

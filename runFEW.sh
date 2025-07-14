@@ -124,6 +124,7 @@ for base in "${basenames[@]}"; do
 
    # Copy rmsd input file
    cp ../FEWer/input_info/measure_all_rmsd.in .
+   sed -i 's/{numres}/'${numres}'/' measure_all_rmsd.in
 
     ### Run MD and MMPBSA
     for i in $(seq 1 $NREP); do
@@ -162,6 +163,7 @@ for base in "${basenames[@]}"; do
         echo "Calculating RMSD..."
         cp ../measure_all_rmsd.in .
         mkdir -p rmsd
+        cp MD_am1/ligand/cryst/ligand_solv_com.top rmsd/
         gunzip -c MD_am1/ligand/com/equi/md_npt_ntr.mdcrd.gz > rmsd/md_npt_ntr.mdcrd
         gunzip -c MD_am1/ligand/com/equi/md_nvt_red_01.mdcrd.gz > rmsd/md_nvt_red_01.mdcrd
         gunzip -c MD_am1/ligand/com/equi/md_nvt_red_02.mdcrd.gz > rmsd/md_nvt_red_02.mdcrd
