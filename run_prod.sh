@@ -15,7 +15,7 @@ receptors=(structs/*_recep.pdb)
 export mpirun_bin=/usr/lib64/openmpi/bin/mpirun
 
 # Use ANTECHAMBER or BABEL to convert from sdf to mol2?
-export sdf_to_mol2=BABEL
+export sdf_to_mol2=ANTECHAMBER
 
 # Number of repetitions
 export NREP=5
