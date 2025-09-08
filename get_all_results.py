@@ -99,6 +99,29 @@ def parse_rmsd(files, rep):
             rmsds[rec][lig] = rmsd
     return rmsds
 
+def parse_rmsd_few(files):
+    rmsds = dict()
+    for path in files.split("\n"):
+        if not path:
+            continue # Ignore empty lines
+        # Example path: ./Ccpg_225/1/rmsd/complex_all.rmsd
+        tokens = path.split(os.sep)
+        rec = tokens[1]
+        lig = "ligand"
+        # Read RMSD file
+        with open(path, "r") as f:
+            rmsd = []
+            for line in f:
+                if not line.startswith("#"):
+                    tokens = line.split() # 2nd column is RMSD
+                    rmsd.append(float(tokens[1]))
+            if not rec in rmsds:
+                rmsds[rec] = dict()
+            if not lig in rmsds[rec]:
+                rmsds[rec][lig] = []
+            rmsds[rec][lig].extend(rmsd)
+    return rmsds
+
 def parse_res_few(res):
     deltaGs = dict()
     for line in res.split("\n"):
@@ -124,13 +147,15 @@ if __name__ == "__main__":
                     prog='get_all_results.py',
                     description='Retrieve all free energy calculation results from FAR MMPBSA and present a summary table with mean deltaG [kcal/mol], standard deviation, Ki [nM] (at 300 K) and pKi. Also reports RMSD [A] of ligand atoms for the last 20 frames (as for deltaG) and for all frames.')
     parser.add_argument('--rep', default='by_lig', help='How are replicates provided? "by_lig": Ligands are replicated inside the SDF. "by_dir": Each replicate run resides in its own subdirectory. In both cases, replicate ligands need to have exactly the same name.')
-    parser.add_argument('--met', default='FAR', help='FAR or FEW. Determines the MM-PBSA method.')
+    parser.add_argument('--met', default='FEW', help='FEW or FAR. Determines the MM-PBSA method.')
     args = parser.parse_args()
 
     if args.met == "FEW":
         res = subprocess.check_output("find . -name *_statistics.out -print0 -exec tail -1 {} \;", shell=True, universal_newlines=True)
         deltaGs = parse_res_few(res)
-        print_deltaGs(deltaGs, {})
+        rmsd_files = subprocess.check_output("find . -name complex_all.rmsd -print", shell=True, universal_newlines=True)
+        rmsds = parse_rmsd_few(rmsd_files)
+        print_deltaGs(deltaGs, rmsds)
     else:
         print("FAR_results")
         res = subprocess.check_output("find . -name FAR_results.tsv -exec cat {} \;", shell=True, universal_newlines=True)
