@@ -71,6 +71,13 @@ for base in "${basenames[@]}"; do
         babel -isdf ../structs/"${lig}" -omol2 ligs/_ligand.mol2
         ../FEWer/fix_atom_names_mol2.py ligs/_ligand.mol2 > ligs/ligand.mol2
         rm ligs/_ligand.mol2
+    elif [[ "$sdf_to_mol2" == "USE_MOL2" ]]; then
+        echo "Not converting ligand from SDF to MOL2. Using provided MOL2 file..."
+        #../FEWer/sdf2mol2.py ../structs/"${lig}" ligs/_ligand.mol2
+        lig_mol2="${lig%.*}.mol2"
+        cp ../structs/"${lig_mol2}" ligs/_ligand.mol2
+        ../FEWer/fix_atom_names_mol2.py ligs/_ligand.mol2 > ligs/ligand.mol2
+        rm ligs/_ligand.mol2
     else
         echo "Using antechamber to convert ligand from SDF to MOL2..."
         antechamber -i ../structs/"${lig}" -fi sdf -o ligs/ligand.mol2 -fo mol2

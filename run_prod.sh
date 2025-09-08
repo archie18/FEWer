@@ -14,7 +14,9 @@ receptors=(structs/*_recep.pdb)
 # mpirun binary
 export mpirun_bin=/usr/lib64/openmpi/bin/mpirun
 
-# Use ANTECHAMBER or BABEL to convert from sdf to mol2?
+# Use ANTECHAMBER, BABEL or USE_MOL2 to convert from sdf to mol2?
+# In case of USE_MOL2, both an SDF and MOL2 version of each ligand is expected.
+# The files should have the same basename, and terminate in .sdf and .mol2.
 export sdf_to_mol2=ANTECHAMBER
 
 # Number of repetitions
