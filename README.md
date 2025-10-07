@@ -3,54 +3,54 @@ Collection of scripts to automize a parallelize Amber's FEW protocol (MM-PBSA) o
 
 ## Setup instructions
 Create a working directory:
-```bash
+```shell
 mkdir MCT1_v3
 ```
 
 Clone the FEWer repository
-```bash
+```shell
 git clone https://github.com/archie18/FEWer.git
 ```
 
 Create a directory for the molecular structure files:
-```bash
+```shell
 mkdir structs
 ```
 
 Here, we will setup a job with a single receptor protein and many docked ligands. Copy the receptor:
-```bash
+```shell
 cp MCT1.pdb structs/
 ```
 
 Now we need to copy the ligand files. We wil assume they are in a zip file with name `23_lig_x2.zip`. Let's create a subdirectory for them:
-```bash
+```shell
 mkdir structs/ligs
 ```
 
 Copy the ligand zip:
-```bash
+```shell
 cp 23_lig_x2.zip structs/ligs
 ```
 
 Unzip the ligands:
-```bash
+```shell
 cd structs/ligs
 unzip 23_lig_x2.zip
 cd ../..
 ```
 
 FEWer works with a complex (a pair of protein and ligand) for MMPBSA calculation. We need to setup these complexes with `make_complexes.sh`. Copy the script so we can modify it:
-```bash
+```shell
 cp FEWer/make_complexes.sh .
 ```
 
 Modify the file with your text editor of choice, e.g.:
-```bash
+```shell
 vim make_complexes.sh
 ```
 
 The file should look something like this:
-```bash
+```shell
 DIR=structs
 REC=MCT1.pdb
 LIGS=ligs/*.sdf
@@ -74,22 +74,22 @@ cd ..
 ```
 
 Run the script to create the complexes:
-```bash
+```shell
 ./make_complexes.sh
 ```
 
 Now copy the FEWer run script:
-```bash
+```shell
 cp FEWer/run_prod.sh .
 ```
 
 Modify the run script with your text editor of choice, e.g.:
-```bash
+```shell
 vim run_prod.sh
 ```
 
 The config section should looke something like this:
-```bash
+```shell
 ########## CONFIGURATION ###########
 
 # Number of parallel CPU jobs
@@ -123,10 +123,10 @@ export PDB4AMBER=1
 ## Usage instructions
 
 Obtain summarized results:
-```bash
+```shell
 ./FEWer/get_all_results.py --met FEW
 ```
 These results can be redirected into a file for convenience:
-```bash
+```shell
 ./FEWer/get_all_results.py --met FEW > results.txt
 ```
