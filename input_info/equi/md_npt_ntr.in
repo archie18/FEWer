@@ -2,8 +2,8 @@ NPT MD w/ position restraints (5 kcal/molA) and PME (sander)
  &cntrl
   ntx    = 5,
   irest  = 1,
-  ntpr   = 50,
-  ntwx   = 50,
+  ntpr   = 100,   ! was 50
+  ntwx   = 2500,  ! was 50
 
   ntf    = 2,
   ntb    = 2,
