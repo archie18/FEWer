@@ -1,10 +1,11 @@
 # FEWer
 Collection of scripts to automize a parallelize Amber's FEW protocol (MM-PBSA) on multiple GPUs
 
-## Setup instructions
+## Setup instructions (one receptor and many ligands)
 Create a working directory:
 ```shell
 mkdir MCT1_v3
+cd MCT1_v3
 ```
 
 Clone the FEWer repository
@@ -17,12 +18,12 @@ Create a directory for the molecular structure files:
 mkdir structs
 ```
 
-Here, we will setup a job with a single receptor protein and many docked ligands. Copy the receptor:
+Here, we will setup a job with a single receptor protein and many docked ligands. The receptor should be in PDB format without hydrogen atoms. Copy the receptor:
 ```shell
 cp MCT1.pdb structs/
 ```
 
-Now we need to copy the ligand files. We wil assume they are in a zip file with name `23_lig_x2.zip`. Let's create a subdirectory for them:
+Now we need to copy the ligand files. Ligands need to be provided full-atom (with hydrogen atoms) and coordinates corresponding to the protein-ligand complex. SDF format is preferred. If ligands are provided as MOL2 files, you still need to provide an SDF version of each ligand that we need in order to determine the formal charge. When providing MOL2 files, use configuration option `export sdf_to_mol2=USE_MOL2` (see below). We will assume ligands are in a zip file with name `23_lig_x2.zip`. Let's create a subdirectory for them:
 ```shell
 mkdir structs/ligs
 ```
@@ -119,14 +120,112 @@ export PDB4AMBER=1
 ###################################
 ```
 
+## Setup instructions (many receptor-ligand complexes)
+Create a working directory:
+```shell
+mkdir fXa_dock_v2
+cd fXa_dock_v2
+```
+
+Clone the FEWer repository
+```shell
+git clone https://github.com/archie18/FEWer.git
+```
+
+Create a directory for the molecular structure files:
+```shell
+mkdir structs
+```
+
+Copy receptor and ligand files to the `structs` directory. Filenames must start with the same prefix, e.g.:
+```shell
+2bq7_lig.mol2
+2bq7_lig.sdf
+2bq7_recep.pdb
+2fzz_lig.mol2
+2fzz_lig.sdf
+2fzz_recep.pdb
+```
+See the section above for notes on SDF/MOL2 format.
+
+Now we need to prepare bound ions. Run the script:
+```shell
+FEWer/make_additional_library.sh
+```
+
+The `structs` directory now should look like this:
+```shell
+2bq7_ions.lib
+2bq7_ions.pdb
+2bq7_lig.mol2
+2bq7_lig.sdf
+2bq7_recep.pdb
+2fzz_ions.lib
+2fzz_ions.pdb
+2fzz_lig.mol2
+2fzz_lig.sdf
+2fzz_recep.pdb
+```
+
+## Setup instructions (advanced)
+Disulphide bridges are taken care of internally, as detected by `pdb4amber`. However, you may provide additional an additional file `_sslink.txt` file, e.g.:
+```shell
+cat structs/6y5f_26_sslink.txt 
+10	135
+44	141
+93	112
+117	122
+159	169
+194	230
+219	334
+371	406
+375	413
+387	471
+401	482
+416	490
+450	454
+```
+Columns are seperated by a tab caracter.
+
+Covalent bonds for tleap setup (e.g. glycolisations) may be provided by a `_bonds.txt` file, e.g.:
+```shell
+cat structs/6y5f_26_bonds.txt 
+bond <name>.514.C1 <name>.118.ND2
+bond <name>.518.C1 <name>.330.ND2
+bond <name>.514.O4 <name>.515.C1
+bond <name>.515.O4 <name>.516.C1
+bond <name>.516.O3 <name>.517.C1
+bond <name>.518.O4 <name>.519.C1
+bond <name>.519.O4 <name>.520.C1
+bond <name>.520.O3 <name>.521.C1
+```
+Run the `FEWer/mod_FEW_for_glycan.sh` script before doing calculations with glycans.
+
 
 ## Usage instructions
+You should run calculations inside a detachable session, e.g. with screen. Source the Amber shell file and then execute the run script: 
+```shell
+screen
+source FEWer/amber.sh
+./run_prod.sh
+```
+
+To detach the screen session press `Ctrl-a` then `d`. To resume the session run:
+```
+screen -r
+```
+
+To check the progress run:
+```shell
+./FEWer/progress.sh
+```
 
 Obtain summarized results:
 ```shell
-./FEWer/get_all_results.py --met FEW
+./FEWer/get_all_results.py
 ```
+
 These results can be redirected into a file for convenience:
 ```shell
-./FEWer/get_all_results.py --met FEW > results.txt
+./FEWer/get_all_results.py > results.txt
 ```
