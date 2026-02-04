@@ -120,6 +120,8 @@ export PDB4AMBER=1
 ###################################
 ```
 
+Now we are ready to run the calculations.
+
 ## Setup instructions (many receptor-ligand complexes)
 Create a working directory:
 ```shell
@@ -167,6 +169,14 @@ The `structs` directory now should look like this:
 2fzz_recep.pdb
 ```
 
+Now copy the FEWer run script and check the configuration section of the file for any options to be changed:
+```shell
+cp FEWer/run_prod.sh .
+vim run_prod.sh
+```
+
+Now we are ready to run the calculations.
+
 ## Setup instructions (advanced)
 Disulphide bridges are taken care of internally, as detected by `pdb4amber`. However, you may provide additional an additional file `_sslink.txt` file, e.g.:
 ```shell
@@ -202,7 +212,7 @@ bond <name>.520.O3 <name>.521.C1
 Run the `FEWer/mod_FEW_for_glycan.sh` script before doing calculations with glycans.
 
 
-## Usage instructions
+## Usage instructions (run calculations)
 You should run calculations inside a detachable session, e.g. with screen. Source the Amber shell file and then execute the run script: 
 ```shell
 screen
@@ -214,6 +224,12 @@ To detach the screen session press `Ctrl-a` then `d`. To resume the session run:
 ```
 screen -r
 ```
+
+Check the log files for any errors or warnings, e.g.:
+```shell
+less gpu_id_0.out
+```
+Press `q` to close the `less` viewer.
 
 To check the progress run:
 ```shell
