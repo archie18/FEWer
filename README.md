@@ -10,7 +10,7 @@ cd MCT1_v3
 
 Clone the FEWer repository
 ```shell
-git clone https://github.com/archie18/FEWer.git
+git clone https://github.com/schuellerlab/FEWer.git
 ```
 
 Create a directory for the molecular structure files:
@@ -131,7 +131,7 @@ cd fXa_dock_v2
 
 Clone the FEWer repository
 ```shell
-git clone https://github.com/archie18/FEWer.git
+git clone https://github.com/schuellerlab/FEWer.git
 ```
 
 Create a directory for the molecular structure files:
